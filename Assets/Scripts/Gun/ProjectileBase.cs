@@ -5,7 +5,7 @@ using UnityEngine;
 public class ProjectileBase : MonoBehaviour
 {
     public float timeToDestroy = 2f;
-    public int damageAmount = 1;
+    public int damageAmount = 5;
     public float speed = 50f;
 
     void Update()
@@ -21,5 +21,10 @@ public class ProjectileBase : MonoBehaviour
     
     private void OnCollisionEnter(Collision collision)
     {
+        var damageable = collision.transform.GetComponent<IDamageable>();
+
+        if (damageable != null) damageable.Damage(damageAmount);
+
+        Destroy(gameObject);
     }
 }

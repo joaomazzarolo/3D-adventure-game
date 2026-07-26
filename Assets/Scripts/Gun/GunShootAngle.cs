@@ -19,7 +19,8 @@ public class GunShootAngle : GunShootLimit
             }
             var projectile = Instantiate(prefabProjectile, positionToShoot);
 
-            projectile.transform.position = Vector3.zero;
+            projectile.transform.position = positionToShoot.position;
+            projectile.transform.rotation = positionToShoot.rotation;
             projectile.transform.localEulerAngles = Vector3.zero + Vector3.up * (i % 2 == 0 ? angle : -angle) * mult;
 
             projectile.speed = speed;
