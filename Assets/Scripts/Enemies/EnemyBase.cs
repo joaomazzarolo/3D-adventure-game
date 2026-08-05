@@ -12,6 +12,10 @@ namespace Enemy
         public float startLife = 10f;
         public FlashColor flashColor;
         public ParticleSystem particleSystem;
+        public bool lookAtPlayer = false;
+        private Player _player;
+        private float distanceToPlayer;
+
 
         [SerializeField] private float _currentLife;
 
@@ -24,6 +28,11 @@ namespace Enemy
         private void Awake()
         {
             Init();
+        }
+
+        private void Start()
+        {
+            _player = GameObject.FindObjectOfType<Player>();
         }
         protected void ResetLife() 
         {
@@ -50,7 +59,11 @@ namespace Enemy
         {
             if (flashColor != null) flashColor.Flash();
             if (particleSystem != null) particleSystem.Emit(10);
+
+            transform.position -= transform.forward;
+
             _currentLife -= f;
+
             if(_currentLife <= 0)
             {
                 Kill();
@@ -73,6 +86,31 @@ namespace Enemy
         public void Damage(float damage)
         {
             OnDamage(damage);
+        }
+        public void Damage(float damage, Vector3 dir)
+        {
+            OnDamage(damage);
+            transform.DOMove(transform.position - dir, .1f);
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            Player p = collision.transform.GetComponent<Player>();
+
+            if (p != null)
+            {
+                p.Damage(1);
+            }
+        }
+
+        public virtual void Update()
+        {
+            distanceToPlayer = Vector3.Distance(_player.transform.position, gameObject.transform.position);
+            if (distanceToPlayer < 20)
+            {
+                transform.LookAt(_player.transform.position);
+                PlayAnimationByTrigger(AnimationType.ATTACK);
+            }
         }
     }
 }
