@@ -99,7 +99,7 @@ namespace Enemy
 
             if (p != null)
             {
-                p.Damage(1);
+                p.healthBase.Damage(1);
             }
         }
 
