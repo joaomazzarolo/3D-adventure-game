@@ -13,6 +13,7 @@ public class Player : MonoBehaviour//, IDamageable
     public float gravity = -9.8f;
     public float jumpSpeed = 15f;
     private bool _alive = true;
+    private bool colliderCheck = true;
     public KeyCode jumpKeyCode = KeyCode.Space;
 
     public UIFillUpdate uiGunUpdate;
@@ -47,6 +48,7 @@ public class Player : MonoBehaviour//, IDamageable
             _alive = false;
             animator.SetTrigger("Death");
             colliders.ForEach(i => i.enabled = false);
+            colliderCheck = false;
 
             Invoke(nameof(Revive), 3f);
         }
@@ -55,6 +57,8 @@ public class Player : MonoBehaviour//, IDamageable
     private void TurnOnColliders()
     {
         colliders.ForEach(i => i.enabled = true);
+
+        colliderCheck = true;
     }
 
     private void Revive()
@@ -69,6 +73,8 @@ public class Player : MonoBehaviour//, IDamageable
     public void Damage(HealthBase h)
     {
         flashColors.ForEach(i => i.Flash());
+        EffectsManager.Instance.ChangeVignette();
+        ShakeCamera.Instance.Shake();
     }
 
     public void Damage(float damage, Vector3 dir)
@@ -109,8 +115,7 @@ public class Player : MonoBehaviour//, IDamageable
                 animator.speed = 1f;
             }
         }
-
-        characterController.Move(speedVector * Time.deltaTime);
+        if(_alive && colliderCheck) characterController.Move(speedVector * Time.deltaTime);
 
         animator.SetBool("Run", inputAxisVertical != 0);
     }
