@@ -22,7 +22,6 @@ public class CheckPointManager : Singleton<CheckPointManager>
 
     public Vector3 GetPositionFromLastCheckPoint()
     {
-        var checkPoint = checkPoints.Find(i => i.key == lastCheckPointKey);
-        return checkPoint.transform.position;
+        return SaveManager.Instance.GetLastCheckpoint();
     }
 }

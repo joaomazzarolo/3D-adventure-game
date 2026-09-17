@@ -26,6 +26,7 @@ namespace Cloth {
         public void ChangeTexture(ClothSetup setup)
         {
             mesh.materials[0].SetTexture(shaderIdName, setup.texture);
+            SaveManager.Instance.Setup.texture = texture;
         }
 
         public void ResetTexture()

@@ -38,12 +38,25 @@ public class Player : Singleton<Player>//, IDamageable
         healthBase.OnDamage += Damage;
         healthBase.OnKill += OnKill;
     }
+    private void Start()
+    {
+        LoadPositionFromFile();
+        LoadHealthFromFile();
+    }
 
     private void OnValidate()
     {
         if (healthBase == null) healthBase = GetComponent<HealthBase>();
     }
 
+    private void LoadPositionFromFile()
+    {
+        transform.position = SaveManager.Instance.GetLastCheckpoint();
+    }
+    private void LoadHealthFromFile()
+    {
+        healthBase._currentLife = SaveManager.Instance.GetPlayerHealthFromFile();
+    }
 
     #region LIFE
     private void OnKill(HealthBase h)
@@ -54,7 +67,6 @@ public class Player : Singleton<Player>//, IDamageable
             animator.SetTrigger("Death");
             colliders.ForEach(i => i.enabled = false);
             colliderCheck = false;
-
             Invoke(nameof(Revive), 3f);
         }
     }
@@ -80,6 +92,7 @@ public class Player : Singleton<Player>//, IDamageable
         flashColors.ForEach(i => i.Flash());
         EffectsManager.Instance.ChangeVignette();
         ShakeCamera.Instance.Shake();
+        SaveManager.Instance.SaveHealth(h._currentLife);
     }
 
     public void Damage(float damage, Vector3 dir)
